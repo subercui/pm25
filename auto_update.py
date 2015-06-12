@@ -7,7 +7,9 @@ import os
 #prepare data
 #gfs
 os.system('python ./datacode/download_gfs.py')
+print "gfs downloading finished"
 gfsdir='/ldata/pm25data/gfs/'
+print "empty gfs files deleted"
 os.system('find '+gfsdir+' -type f -size 0 -exec rm -f {} \;')
 #pm25 mean
 os.system('python ./datacode/pm25_mean.py')
