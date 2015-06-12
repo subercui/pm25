@@ -34,7 +34,8 @@ import theano.tensor as T
 
 
 from pm25_logistic_sgd0605 import LogisticRegression, load_data
-
+from datetime import datetime
+today=datetime.today()
 
 # start-snippet-1
 class HiddenLayer(object):
@@ -195,7 +196,7 @@ class MLP(object):
 
 
 def test_mlp(learning_rate=0.1, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
-             dataset='/ldata/pm25data/pm25dataset/Pm25Dataset0605_t0401-0510_p100shuffled.pkl.gz', batch_size=30, n_hidden=100):
+             dataset='/ldata/pm25data/pm25dataset/Pm25Dataset'+today.strftime('%Y%m%d')+'_t45p100shuffled.pkl.gz', batch_size=30, n_hidden=100):
     """
     Demonstrate stochastic gradient descent optimization for a multilayer
     perceptron
@@ -422,7 +423,7 @@ def test_mlp(learning_rate=0.1, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
                           os.path.split(__file__)[1] +
                           ' ran for %.2fm' % ((end_time - start_time) / 60.))
 
-    save_file = gzip.open('/ldata/pm25data/pm25model/MlpModel0605.pkl.gz', 'wb')
+    save_file = gzip.open('/ldata/pm25data/pm25model/MlpModel'+today.strftime('%Y%m%d')+'.pkl.gz', 'wb')
     cPickle.dump(classifier.hiddenLayer.W, save_file, -1)
     cPickle.dump(classifier.hiddenLayer.b, save_file, -1)
     cPickle.dump(classifier.logRegressionLayer.W, save_file, -1)

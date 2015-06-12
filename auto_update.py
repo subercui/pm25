@@ -4,6 +4,7 @@
 
 import sys
 import os
+from datetime import datetime
 #prepare data
 #gfs
 os.system('python ./datacode/download_gfs.py')
@@ -24,3 +25,9 @@ print "dataset generated"
 #os.system('python ./model/pm25_mlp.py')
 os.system('python ./model/pm25_mlp0605.py')
 print "model trained"
+
+#rsync
+today=datetime.today()
+os.system('rsync -av /ldata/pm25data/pm25model/MlpModel'+today.strftime('%Y%m%d')+'.pkl.gz caiyun@10.144.246.254:/ldata/pm25data/pm25model/')
+os.system('rsync -avr /ldata/pm25data/pm25mean/mean'+today.strftime('%Y%m%d')+' caiyun@10.144.246.254:/ldata/pm25data/pm25mean/')
+print "rsync finished"

@@ -11,22 +11,34 @@ import cPickle, gzip, numpy
 import matplotlib
 from pylab import*
 from glob import glob #用到了这个模块
+from datetime import *
 
 def search_file(pattern, search_path=os.environ['PATH'], pathsep=os.pathsep):
     for path in search_path.split(os.pathsep):
         for match in glob(os.path.join(path, pattern)):
             yield match
 
+def generate_matchs(i,pm25path):
+    matchs=[]
+    p=datetime.today()
+    p=p.replace(hour=i)
+    for d in range(45):#设置求平均的时间长度45days
+        p=p-timedelta(days=1)
+        match=p.strftime('%Y%m%d%H')
+        match=pm25path+match+'.pkl.gz'
+        matchs.append(match)
+    return matchs
+
 def form_meandata(matchs):
-    f = gzip.open(matchs[0], 'rb')
-    temp = cPickle.load(f)
-    sumdata = numpy.zeros(temp.shape,int)#sumdata 的数据类型至少是int，保证不溢出
+    sumdata = 0#sumdata 的数据类型至少是int，保证不溢出
+    num=0
     for match in matchs:
-        if os.path.getsize(match)>0:
+        if os.path.exists(match) and os.path.getsize(match)>0:
+            num=num+1
             f = gzip.open(match, 'rb')
             temp = cPickle.load(f)
             sumdata = sumdata+temp
-    mean = sumdata//len(matchs)
+    mean = sumdata//num
     return mean
     
 def savefile(m,path):
@@ -49,10 +61,14 @@ if __name__ == '__main__':
     searchday=20150315
     searchrange=30
     for i in range(24):#从0：00开始读到第i点
-        matchs = list(search_file('20150[56]*'+str('%002d'%(i))+'.pkl.gz', search_path='/mnt/storm/nowcasting/pm25/'))#4月和5月的
+        #matchs = list(search_file('20150[56]*'+str('%002d'%(i))+'.pkl.gz', search_path='/mnt/storm/nowcasting/pm25/'))#4月和5月的
+        matchs=generate_matchs(i,pm25path='/mnt/storm/nowcasting/pm25/')
         print '%d match' % len(matchs)
         for match in matchs:
             print match
         mean=form_meandata(matchs)
         #showimage(mean,title='pm2.5 at '+str(i)+':00',path='/ldata/pm25data/pm25mean/mean0515'+str(i)+'.jpg')
-        savefile(mean,path='/ldata/pm25data/pm25mean/mean0605_t0501-0605/'+'meanfor'+str(i)+'.pkl')
+        path='/ldata/pm25data/pm25mean/mean'+datetime.today().strftime('%Y%m%d')
+        if not os.path.isdir(path):
+            os.mkdir(path)
+        savefile(mean,path=path+'/'+'meanfor'+str(i)+'.pkl')

@@ -15,7 +15,8 @@ p = Proj('+proj=merc')
 
 gfsdir='/ldata/pm25data/gfs/'
 pm25dir='/mnt/storm/nowcasting/pm25/'
-pm25meandir='/ldata/pm25data/pm25mean/mean0515/'
+today=datetime.datetime.today()
+pm25meandir='/ldata/pm25data/pm25mean/mean'+today.strftime('%Y%m%d')+'/'
 savedir='/ldata/pm25data/pm25dataset/'
 
 def interp(data,lat_x,lon_y):
@@ -216,9 +217,11 @@ class Pm25Dataset(object):
         
 if __name__ == '__main__':
     #a,b=lonlat2mercator()
-    obj=Pm25Dataset()
+    start=(today-datetime.timedelta(days=47)).strftime('%Y%m%d')+'08'
+    stop=(today-datetime.timedelta(days=3)).strftime('%Y%m%d')+'08'
+    obj=Pm25Dataset(start=start,stop=stop)
     #obj=Pm25Dataset(lon=np.array([116.3883,117.20,121.48,106.54,118.78,113.66]),lat=np.array([39.3289,39.13,31.22,29.59,32.04,34.76]))
-    savefile(obj.input_data,savedir+'Pm25Dataset0605_t0401-0510_p100.pkl.gz')
-    np.savetxt(savedir+"Pm25Dataset0605_t0401-0510_p100.txt", obj.input_data, fmt='%.2f')
+    savefile(obj.input_data,savedir+'Pm25Dataset'+today.strftime('%Y%m%d')+'_t45p100.pkl.gz')
+    np.savetxt(savedir+"Pm25Dataset"+today.strftime('%Y%m%d')+"_t45p100.txt", obj.input_data, fmt='%.2f')
     np.random.shuffle(obj.input_data)
-    savefile(obj.input_data,savedir+'Pm25Dataset0605_t0401-0510_p100shuffled.pkl.gz')
+    savefile(obj.input_data,savedir+'Pm25Dataset'+today.strftime('%Y%m%d')+'_t45p100shuffled.pkl.gz')

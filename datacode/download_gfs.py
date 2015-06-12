@@ -4,6 +4,7 @@ import sys
 import os
 from qiniu import Auth
 from multiprocessing import Pool 
+from datetime import *
 
 access_key = 'CUHjrT-KJB8tT2p3dOtrGINkdpd2CbeAMqMquh-V'
 secret_key = 'p5FpEQKCQJbfMyTYa9lLbQnH9lEqlKwsQJoVOnPu'
@@ -11,6 +12,17 @@ q = Auth(access_key, secret_key)
 bucket = '7u2sgg.com2.z0.glb'
 
 def get_key():
+    list_key = []
+    day=date.today()-timedelta(days=1)
+    base_key=day.strftime('%Y%m%d/%H/003')
+    for hour in range(0,24,6):
+        base_key=base_key[0:9]+str('%02d'%(hour))+base_key[11:]
+        for i in [3,6]:
+            base_key=base_key[0:12]+str('%0003d'%(i))
+            list_key.append(base_key)
+    return list_key
+
+'''def get_key():
     list_key = []
     base_key = "20150203/18/003"
     for mon in range(5,7):
@@ -22,7 +34,7 @@ def get_key():
                 for i in [3,6]:
                     base_key=base_key[0:12]+str('%0003d'%(i))
                     list_key.append(base_key)
-    return list_key
+    return list_key'''
 
 def get_url(key):
     burl = 'http://%s/%s' % (bucket + '.clouddn.com', key)
