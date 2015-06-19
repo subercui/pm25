@@ -4,6 +4,7 @@
 #gfs分辨率为0.25°，经度从0开始向东经为正，维度从北纬90°开始向南为正。第一维是维度，第二维是经度（721*1440）。
 
 #现在要预测48小时pm25，输入前144维是72小时内的每隔3小时gfs，之后24维pm25，之后48维未来pm25
+#6.19现在要修改预测时间t_predict=120 小时的预测，这次要把所有维度设置改为统一由t——predict调整的
 #imputs包括之前一天24小时的pm25,6*8=48维的gfs，之后预测时间段内t_predict/3*6维的gfs数据；
 from __future__ import division
 import os
@@ -20,7 +21,7 @@ today=datetime.datetime.today()
 pm25meandir='/ldata/pm25data/pm25mean/mean'+today.strftime('%Y%m%d')+'/'
 savedir='/ldata/pm25data/pm25dataset/'
 
-t_predict = 48 #设置预测的时间
+t_predict = 120 #设置预测的时间
 
 def interp(data,lat_x,lon_y):
     
@@ -179,7 +180,7 @@ class Pm25Dataset(object):
         for h in range(24+t_predict):#在starttime前后两天的时间点,这个循环填上第一个example的后24+t_predict个数据
             name=(self.starttime+datetime.timedelta(hours=h-23)).strftime('%Y%m%d%H')
             cnt=0
-            if os.path.exists(pm25dir+name+'.pkl.gz') and os.path.getsize(pm25dir+name+'.pkl.gz')>0:#判断文件是否存在
+            if os.path.exists(pm25dir+name+'.pkl.gz'):#判断文件是否存在
                 f = gzip.open(pm25dir+name+'.pkl.gz', 'rb')
                 temp=cPickle.load(f)
                 f.close()
@@ -224,7 +225,7 @@ if __name__ == '__main__':
     stop=(today-datetime.timedelta(days=3)).strftime('%Y%m%d')+'08'
     obj=Pm25Dataset(start=start,stop=stop)
     #obj=Pm25Dataset(lon=np.array([116.3883,117.20,121.48,106.54,118.78,113.66]),lat=np.array([39.3289,39.13,31.22,29.59,32.04,34.76]))
-    savefile(obj.input_data,savedir+'Pm25Dataset'+today.strftime('%Y%m%d')+'_t45p100.pkl.gz')
-    np.savetxt(savedir+"Pm25Dataset"+today.strftime('%Y%m%d')+"_t45p100.txt", obj.input_data, fmt='%.2f')
+    savefile(obj.input_data,savedir+'120hPm25Dataset'+today.strftime('%Y%m%d')+'_t45p100.pkl.gz')
+    np.savetxt(savedir+"120hPm25Dataset"+today.strftime('%Y%m%d')+"_t45p100.txt", obj.input_data, fmt='%.2f')
     np.random.shuffle(obj.input_data)
-    savefile(obj.input_data,savedir+'Pm25Dataset'+today.strftime('%Y%m%d')+'_t45p100shuffled.pkl.gz')
+    savefile(obj.input_data,savedir+'120hPm25Dataset'+today.strftime('%Y%m%d')+'_t45p100shuffled.pkl.gz')
