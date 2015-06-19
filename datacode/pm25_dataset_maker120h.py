@@ -4,6 +4,7 @@
 #gfs分辨率为0.25°，经度从0开始向东经为正，维度从北纬90°开始向南为正。第一维是维度，第二维是经度（721*1440）。
 
 #现在要预测48小时pm25，输入前144维是72小时内的每隔3小时gfs，之后24维pm25，之后48维未来pm25
+#6.19现在要修改预测时间t_predict=120 小时的预测，这次要把所有维度设置改为统一由t——predict调整的
 #imputs包括之前一天24小时的pm25,6*8=48维的gfs，之后预测时间段内t_predict/3*6维的gfs数据；
 from __future__ import division
 import os
@@ -20,7 +21,7 @@ today=datetime.datetime.today()
 pm25meandir='/ldata/pm25data/pm25mean/mean'+today.strftime('%Y%m%d')+'/'
 savedir='/ldata/pm25data/pm25dataset/'
 
-t_predict = 48 #设置预测的时间
+t_predict = 120 #设置预测的时间
 
 def interp(data,lat_x,lon_y):
     
