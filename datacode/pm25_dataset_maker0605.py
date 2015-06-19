@@ -176,7 +176,7 @@ class Pm25Dataset(object):
         for h in range(72):#在starttime前后两天的时间点,这个循环填上第一个example的后72个数据
             name=(self.starttime+datetime.timedelta(hours=h-23)).strftime('%Y%m%d%H')
             cnt=0
-            if os.path.exists(pm25dir+name+'.pkl.gz'):#判断文件是否存在
+            if os.path.exists(pm25dir+name+'.pkl.gz') and os.path.getsize(pm25dir+name+'.pkl.gz')>0:#判断文件是否存在
                 f = gzip.open(pm25dir+name+'.pkl.gz', 'rb')
                 temp=cPickle.load(f)
                 f.close()
