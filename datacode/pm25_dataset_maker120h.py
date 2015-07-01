@@ -180,7 +180,7 @@ class Pm25Dataset(object):
         for h in range(24+t_predict):#在starttime前后两天的时间点,这个循环填上第一个example的后24+t_predict个数据
             name=(self.starttime+datetime.timedelta(hours=h-23)).strftime('%Y%m%d%H')
             cnt=0
-            if os.path.exists(pm25dir+name+'.pkl.gz'):#判断文件是否存在
+            if os.path.exists(pm25dir+name+'.pkl.gz') and os.path.getsize(pm25dir+name+'.pkl.gz')>0:#判断文件是否存在
                 f = gzip.open(pm25dir+name+'.pkl.gz', 'rb')
                 temp=cPickle.load(f)
                 f.close()
@@ -221,7 +221,7 @@ class Pm25Dataset(object):
         
 if __name__ == '__main__':
     #a,b=lonlat2mercator()
-    start=(today-datetime.timedelta(days=47)).strftime('%Y%m%d')+'08'
+    start=(today-datetime.timedelta(days=100)).strftime('%Y%m%d')+'08'
     stop=(today-datetime.timedelta(days=3)).strftime('%Y%m%d')+'08'
     obj=Pm25Dataset(start=start,stop=stop)
     #obj=Pm25Dataset(lon=np.array([116.3883,117.20,121.48,106.54,118.78,113.66]),lat=np.array([39.3289,39.13,31.22,29.59,32.04,34.76]))

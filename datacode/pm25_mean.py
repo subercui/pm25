@@ -25,7 +25,10 @@ def generate_matchs(i,pm25path):
     for d in range(45):#设置求平均的时间长度45days
         p=p-timedelta(days=1)
         match=p.strftime('%Y%m%d%H')
-        match=pm25path+match+'.pkl.gz'
+        if int(match)>2015061324:
+            match=pm25path+match[0:8]+'/'+match+'.pkl.gz'
+        else:
+            match=pm25path+match+'.pkl.gz'
         matchs.append(match)
     return matchs
 
@@ -35,6 +38,7 @@ def form_meandata(matchs):
     for match in matchs:
         if os.path.exists(match) and os.path.getsize(match)>0:
             num=num+1
+            print match
             f = gzip.open(match, 'rb')
             temp = cPickle.load(f)
             sumdata = sumdata+temp
@@ -64,8 +68,8 @@ if __name__ == '__main__':
         #matchs = list(search_file('20150[56]*'+str('%002d'%(i))+'.pkl.gz', search_path='/mnt/storm/nowcasting/pm25/'))#4月和5月的
         matchs=generate_matchs(i,pm25path='/mnt/storm/nowcasting/pm25/')
         print '%d match' % len(matchs)
-        for match in matchs:
-            print match
+        #for match in matchs:
+        #    print match
         mean=form_meandata(matchs)
         #showimage(mean,title='pm2.5 at '+str(i)+':00',path='/ldata/pm25data/pm25mean/mean0515'+str(i)+'.jpg')
         path='/ldata/pm25data/pm25mean/mean'+datetime.today().strftime('%Y%m%d')

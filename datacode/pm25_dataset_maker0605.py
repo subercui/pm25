@@ -179,17 +179,30 @@ class Pm25Dataset(object):
         for h in range(24+t_predict):#在starttime前后两天的时间点,这个循环填上第一个example的后24+t_predict个数据
             name=(self.starttime+datetime.timedelta(hours=h-23)).strftime('%Y%m%d%H')
             cnt=0
-            if os.path.exists(pm25dir+name+'.pkl.gz') and os.path.getsize(pm25dir+name+'.pkl.gz')>0:#判断文件是否存在
-                f = gzip.open(pm25dir+name+'.pkl.gz', 'rb')
-                temp=cPickle.load(f)
-                f.close()
-                for k in range(self.n_points):
-                    inputs[(0+k*self.n_perpoint,6*8+t_predict*2+h)]=temp[(self.cord_x[k],self.cord_y[k])]-pm25mean[int(name[8:10])][self.cord_x[k],self.cord_y[k]]
-                #(h+24)*2+cnt是用来找对应的格位置，（h+24）*2是对应小时的6格开始位置，再加上cnt作为偏置
-            else:#用1小时之前的替换
-                for k in range(self.n_points):
-                    inputs[(0+k*self.n_perpoint,6*8+t_predict*2+h)]=inputs[(0+k*self.n_perpoint,6*8+t_predict*2+h-1)]                
-            cnt=cnt+1
+            if int(name) > 2015061324:
+                if os.path.exists(pm25dir+name[0:8]+'/'+name+'.pkl.gz') and os.path.getsize(pm25dir+name[0:8]+'/'+name+'.pkl.gz')>0:#判断文件是否存在
+                    f = gzip.open(pm25dir+name[0:8]+'/'+name+'.pkl.gz', 'rb')
+                    temp=cPickle.load(f)
+                    f.close()
+                    for k in range(self.n_points):
+                        inputs[(0+k*self.n_perpoint,6*8+t_predict*2+h)]=temp[(self.cord_x[k],self.cord_y[k])]-pm25mean[int(name[8:10])][self.cord_x[k],self.cord_y[k]]
+                    #(h+24)*2+cnt是用来找对应的格位置，（h+24）*2是对应小时的6格开始位置，再加上cnt作为偏置
+                else:#用1小时之前的替换
+                    for k in range(self.n_points):
+                        inputs[(0+k*self.n_perpoint,6*8+t_predict*2+h)]=inputs[(0+k*self.n_perpoint,6*8+t_predict*2+h-1)]                
+                cnt=cnt+1
+            else:
+                if os.path.exists(pm25dir+name+'.pkl.gz') and os.path.getsize(pm25dir+name+'.pkl.gz')>0:#判断文件是否存在
+                    f = gzip.open(pm25dir+name+'.pkl.gz', 'rb')
+                    temp=cPickle.load(f)
+                    f.close()
+                    for k in range(self.n_points):
+                        inputs[(0+k*self.n_perpoint,6*8+t_predict*2+h)]=temp[(self.cord_x[k],self.cord_y[k])]-pm25mean[int(name[8:10])][self.cord_x[k],self.cord_y[k]]
+                    #(h+24)*2+cnt是用来找对应的格位置，（h+24）*2是对应小时的6格开始位置，再加上cnt作为偏置
+                else:#用1小时之前的替换
+                    for k in range(self.n_points):
+                        inputs[(0+k*self.n_perpoint,6*8+t_predict*2+h)]=inputs[(0+k*self.n_perpoint,6*8+t_predict*2+h-1)]                
+                cnt=cnt+1
             
         for i in range(1,self.n_perpoint):#for 全部行,生成后24+t_predict维数据
             current=self.starttime+datetime.timedelta(hours=3*i)
@@ -201,16 +214,29 @@ class Pm25Dataset(object):
                 #后24维作为output,从当前时刻之后的一小时开始
                 #name=(current-datetime.timedelta(hours=h)).strftime('%Y%m%d%H')
                 name=(current+datetime.timedelta(hours=h+t_predict-2)).strftime('%Y%m%d%H')#未来t_predict-2，t_predict-1，t_predict小时
-                if os.path.exists(pm25dir+name+'.pkl.gz') and os.path.getsize(pm25dir+name+'.pkl.gz')>0:#判断文件是否存在
-                    f = gzip.open(pm25dir+name+'.pkl.gz', 'rb')
-                    print(name+'.pkl.gz')
-                    temp=cPickle.load(f)
-                    f.close()
-                    for k in range(self.n_points):
-                        inputs[i+k*self.n_perpoint,(6*8+t_predict*2)+(24+t_predict)-3+h]=temp[self.cord_x[k],self.cord_y[k]]-pm25mean[int(name[8:10])][self.cord_x[k],self.cord_y[k]]
-                else:#用右边后一个小时的数据填充（暂定可能的补偿方法）
-                    for k in range(self.n_points):
-                        inputs[i+k*self.n_perpoint,(6*8+t_predict*2)+(24+t_predict)-3+h]=inputs[i+k*self.n_perpoint,(6*8+t_predict*2)+(24+t_predict)-3+h-1]
+                if int(name) > 2015061324:
+                    if os.path.exists(pm25dir+name[0:8]+'/'+name+'.pkl.gz') and os.path.getsize(pm25dir+name[0:8]+'/'+name+'.pkl.gz')>0:#判断文件是否存在
+                        f = gzip.open(pm25dir+name[0:8]+'/'+name+'.pkl.gz', 'rb')
+                        print(name+'.pkl.gz')
+                        temp=cPickle.load(f)
+                        f.close()
+                        for k in range(self.n_points):
+                            inputs[i+k*self.n_perpoint,(6*8+t_predict*2)+(24+t_predict)-3+h]=temp[self.cord_x[k],self.cord_y[k]]-pm25mean[int(name[8:10])][self.cord_x[k],self.cord_y[k]]
+                    else:#用右边后一个小时的数据填充（暂定可能的补偿方法）
+                        for k in range(self.n_points):
+                            inputs[i+k*self.n_perpoint,(6*8+t_predict*2)+(24+t_predict)-3+h]=inputs[i+k*self.n_perpoint,(6*8+t_predict*2)+(24+t_predict)-3+h-1]
+                else:
+                    if os.path.exists(pm25dir+name+'.pkl.gz') and os.path.getsize(pm25dir+name+'.pkl.gz')>0:#判断文件是否存在
+                        f = gzip.open(pm25dir+name+'.pkl.gz', 'rb')
+                        print(name+'.pkl.gz')
+                        temp=cPickle.load(f)
+                        f.close()
+                        for k in range(self.n_points):
+                            inputs[i+k*self.n_perpoint,(6*8+t_predict*2)+(24+t_predict)-3+h]=temp[self.cord_x[k],self.cord_y[k]]-pm25mean[int(name[8:10])][self.cord_x[k],self.cord_y[k]]
+                    else:#用右边后一个小时的数据填充（暂定可能的补偿方法）
+                        for k in range(self.n_points):
+                            inputs[i+k*self.n_perpoint,(6*8+t_predict*2)+(24+t_predict)-3+h]=inputs[i+k*self.n_perpoint,(6*8+t_predict*2)+(24+t_predict)-3+h-1]
+
         
         '''send out'''
         return inputs
@@ -220,7 +246,7 @@ class Pm25Dataset(object):
         
 if __name__ == '__main__':
     #a,b=lonlat2mercator()
-    start=(today-datetime.timedelta(days=47)).strftime('%Y%m%d')+'08'
+    start=(today-datetime.timedelta(days=103)).strftime('%Y%m%d')+'08'
     stop=(today-datetime.timedelta(days=3)).strftime('%Y%m%d')+'08'
     obj=Pm25Dataset(start=start,stop=stop)
     #obj=Pm25Dataset(lon=np.array([116.3883,117.20,121.48,106.54,118.78,113.66]),lat=np.array([39.3289,39.13,31.22,29.59,32.04,34.76]))
