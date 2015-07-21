@@ -238,6 +238,20 @@ class Pm25Dataset(object):
                             inputs[i+k*self.n_perpoint,(6*8+t_predict*2)+(24+t_predict)-3+h]=inputs[i+k*self.n_perpoint,(6*8+t_predict*2)+(24+t_predict)-3+h-1]
 
         
+        '''amend data, enhance heavy pm25 and heavily changing days'''
+        repeat=10
+        morerows=0
+        moreindexlist=[]
+        for i in range(inputs.shape[0]):
+            test = inputs[i,-t_predict:]#寻找有用的典型例子
+            if np.mean(test)>50 and np.var(test)>450:
+                morerows=morerows+repeat
+                moreindexlist.append(i)
+        more=np.zeros((morerows,inputs.shape[1]))
+        for i in range(len(moreindexlist)):
+            more[i*repeat:(i+1)*repeat,:]=inputs[moreindexlist[i],:]
+        inputs=np.vstack((inputs,more))
+                
         '''send out'''
         return inputs
                                  

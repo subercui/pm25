@@ -195,7 +195,7 @@ class MLP(object):
         # end-snippet-3
 
 
-def test_mlp(learning_rate=0.1, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
+def test_mlp(learning_rate=0.1, L1_reg=0.00, L2_reg=0.000, n_epochs=1000,
              dataset='/ldata/pm25data/pm25dataset/Pm25Dataset'+today.strftime('%Y%m%d')+'_t45p100shuffled.pkl.gz', batch_size=30, n_hidden=100):
     """
     Demonstrate stochastic gradient descent optimization for a multilayer
