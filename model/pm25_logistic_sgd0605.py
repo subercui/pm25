@@ -210,19 +210,21 @@ def load_data(dataset):
     #change here:train_set, valid_set, test_set = cPickle.load(f)
     pm25_set = cPickle.load(f)
     f.close()
+    #反推预测时常t_predict
+    t_predict=(pm25_set.shape[1]-24-8*6)/(1+2)
     #风速绝对化，实验试试看是否提高预测精度
-    for i in range(24):#three days
+    for i in range(8*(t_predict/24+1)):#three days
         wind=numpy.sqrt(pm25_set[:,(i*6+2)]**2+pm25_set[:,(i*6+3)]**2)
         drct=pm25_set[:,(i*6+2)]/pm25_set[:,(i*6+3)]
         pm25_set[:,(i*6+2)]=wind
         #pm25_set[:,(i*6+3)]=drct
     #风速绝对值化
-    pm25_set[:,0:144]=numpy.abs(pm25_set[:,0:144])
+    pm25_set[:,0:2*t_predict+48]=numpy.abs(pm25_set[:,0:2*t_predict+48])
     #归一化
-    para_min=numpy.amin(pm25_set[:,0:144],axis=0)
-    para_max=numpy.amax(pm25_set[:,0:144],axis=0)
-    pm25_set[:,0:144]=(pm25_set[:,0:144]-numpy.amin(pm25_set[:,0:144],axis=0))/(numpy.amax(pm25_set[:,0:144],axis=0)-numpy.amin(pm25_set[:,0:144],axis=0))
-    pm25_set[:,144:216]=pm25_set[:,144:216]/100.
+    para_min=numpy.amin(pm25_set[:,0:2*t_predict+48],axis=0)
+    para_max=numpy.amax(pm25_set[:,0:2*t_predict+48],axis=0)
+    pm25_set[:,0:2*t_predict+48]=(pm25_set[:,0:2*t_predict+48]-numpy.amin(pm25_set[:,0:2*t_predict+48],axis=0))/(numpy.amax(pm25_set[:,0:2*t_predict+48],axis=0)-numpy.amin(pm25_set[:,0:2*t_predict+48],axis=0))
+    pm25_set[:,2*t_predict+48:]=pm25_set[:,2*t_predict+48:]/100.
     train_set, valid_set, test_set = numpy.vsplit(pm25_set,[int(0.75*len(pm25_set)),int(0.875*len(pm25_set))]) 
     #train_set, valid_set, test_set format: tuple(input, target)
     #input is an numpy.ndarray of 2 dimensions (a matrix)
@@ -240,7 +242,7 @@ def load_data(dataset):
         is needed (the default behaviour if the data is not in a shared
         variable) would lead to a large decrease in performance.
         """
-        data_x, data_y = numpy.hsplit(data_xy,[168])
+        data_x, data_y = numpy.hsplit(data_xy,[2*t_predict+48+24])
         shared_x = theano.shared(numpy.asarray(data_x,
                                                dtype=theano.config.floatX),
                                  borrow=borrow)
