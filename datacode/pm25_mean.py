@@ -63,7 +63,6 @@ def showimage(data,title,path):
         
 if __name__ == '__main__':
     searchday=20150315
-    searchrange=30
     for i in range(24):#从0：00开始读到第i点
         #matchs = list(search_file('20150[56]*'+str('%002d'%(i))+'.pkl.gz', search_path='/mnt/storm/nowcasting/pm25/'))#4月和5月的
         matchs=generate_matchs(i,pm25path='/mnt/storm/nowcasting/pm25/')
