@@ -22,7 +22,7 @@ def generate_matchs(i,pm25path):
     matchs=[]
     p=datetime.today()
     p=p.replace(hour=i)
-    for d in range(45):#设置求平均的时间长度45days
+    for d in range(30):#设置求平均的时间长度30days
         p=p-timedelta(days=1)
         match=p.strftime('%Y%m%d%H')
         if int(match)>2015061324:

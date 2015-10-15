@@ -25,6 +25,10 @@ print "pm25 mean generated"
 #print "48h dataset generated"
 os.system('python /home/suber/projects/pm25/datacode/pm25_dataset_maker120h.py')
 print "120h dataset generated"
+os.system('python /home/suber/projects/RNN_pm25/datacode/RNNPm25DataMaker.py')
+print "RNN dataset generated"
+if not os.path.exists('/ldata/pm25data/pm25dataset/RNNPm25Dataset'+today.strftime('%Y%m%d')+'_t100p100shuffled.pkl.gz'):
+        os.system('echo "Pm25 RNN Dataset file generating error!" | mail -s "caiyun pm25 alarm" "subercui@sina.com"')
 
 #update model
 #os.system('python /home/suber/projects/pm25/model/pm25_mlp0605.py')
