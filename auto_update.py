@@ -45,3 +45,8 @@ print "rsync finished"
 #check
 if not(os.path.exists('/ldata/pm25data/pm25model/120hMlpModel'+today.strftime('%Y%m%d')+'.pkl.gz') and os.path.exists('/ldata/pm25data/pm25mean/mean'+today.strftime('%Y%m%d'))):
     os.system('echo "Pm25 file generating error!" | mail -s "caiyun pm25 alarm" "subercui@sina.com"')
+
+if today.day==20:
+    monthago=today.replace(month=today.month-1)
+    os.system('rm /ldata/pm25data/pm25dataset/120hPm25Dataset'+monthago.strftime('%Y%m')+'*')
+    os.system('rm /ldata/pm25data/pm25dataset/RNNPm25Dataset'+monthago.strftime('%Y%m')+'*')
