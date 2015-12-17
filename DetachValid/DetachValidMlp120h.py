@@ -196,8 +196,8 @@ class MLP(object):
         # end-snippet-3
 
 
-def test_mlp(t_predict=120, learning_rate=0.1, L1_reg=0.00, L2_reg=0.000, n_epochs=1000,
-             dataset='/ldata/pm25data/pm25dataset/120hDetachValid'+today.strftime('%Y%m%d')+'_t100p100shuffled.pkl.gz', batch_size=30, n_hidden=500):
+def test_mlp(t_predict=120, learning_rate=0.01, L1_reg=0.00, L2_reg=0.000, n_epochs=1000,
+             dataset='/ldata/pm25data/pm25dataset/120hDetachValid'+today.strftime('%Y%m%d')+'_t100p100.pkl.gz', batch_size=30, n_hidden=500):
     """
     Demonstrate stochastic gradient descent optimization for a multilayer
     perceptron

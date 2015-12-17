@@ -23,27 +23,25 @@ print "pm25 mean generated"
 #update dataset
 #os.system('python /home/suber/projects/pm25/datacode/pm25_dataset_maker0605.py')
 #print "48h dataset generated"
-os.system('python /home/suber/projects/pm25/datacode/pm25_dataset_maker120h.py')
-print "120h dataset generated"
 os.system('python /home/suber/projects/RNN_pm25/datacode/RNNPm25DataMaker.py')
 print "RNN dataset generated"
 if not os.path.exists('/ldata/pm25data/pm25dataset/RNNPm25Dataset'+today.strftime('%Y%m%d')+'_t100p100shuffled.pkl.gz'):
         os.system('echo "Pm25 RNN Dataset file generating error!" | mail -s "caiyun pm25 alarm" "subercui@sina.com"')
 
 #update model
-#os.system('python /home/suber/projects/pm25/model/pm25_mlp0605.py')
-#print "48h model trained"
-os.system('python /home/suber/projects/pm25/model/pm25_mlp120h.py')
-print "120h model trained"
+os.system('python /home/suber/projects/RNN_pm25/model/Pm25RNN_MINIBATCH.py')
+print "RNN model trained"
 
 #rsync
 #os.system('rsync -av /ldata/pm25data/pm25model/MlpModel'+today.strftime('%Y%m%d')+'.pkl.gz caiyun@10.144.246.254:/ldata/pm25data/pm25model/')
-os.system('rsync -av /ldata/pm25data/pm25model/120hMlpModel'+today.strftime('%Y%m%d')+'.pkl.gz caiyun@10.144.246.254:/ldata/pm25data/pm25model/')
+os.system('rsync -av /ldata/pm25data/pm25model/RNNModel'+today.strftime('%Y%m%d')+'.pkl.gz caiyun@10.144.246.254:/ldata/pm25data/pm25model/')
 os.system('rsync -avr /ldata/pm25data/pm25mean/mean'+today.strftime('%Y%m%d')+' caiyun@10.144.246.254:/ldata/pm25data/pm25mean/')
+os.system('rsync -av /ldata/pm25data/pm25model/RNNModel'+today.strftime('%Y%m%d')+'.pkl.gz caiyun@inner.wrapper2.api.caiyunapp.com:/ldata/pm25data/pm25model/')
+os.system('rsync -avr /ldata/pm25data/pm25mean/mean'+today.strftime('%Y%m%d')+' caiyun@inner.wrapper2.api.caiyunapp.com:/ldata/pm25data/pm25mean/')
 print "rsync finished"
 
 #check
-if not(os.path.exists('/ldata/pm25data/pm25model/120hMlpModel'+today.strftime('%Y%m%d')+'.pkl.gz') and os.path.exists('/ldata/pm25data/pm25mean/mean'+today.strftime('%Y%m%d'))):
+if not(os.path.exists('/ldata/pm25data/pm25model/RNNModel'+today.strftime('%Y%m%d')+'.pkl.gz') and os.path.exists('/ldata/pm25data/pm25mean/mean'+today.strftime('%Y%m%d'))):
     os.system('echo "Pm25 file generating error!" | mail -s "caiyun pm25 alarm" "subercui@sina.com"')
 
 if today.day==20:

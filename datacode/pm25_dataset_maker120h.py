@@ -266,6 +266,6 @@ if __name__ == '__main__':
     obj=Pm25Dataset(start=start,stop=stop)
     #obj=Pm25Dataset(lon=np.array([116.3883,117.20,121.48,106.54,118.78,113.66]),lat=np.array([39.3289,39.13,31.22,29.59,32.04,34.76]))
     savefile(obj.input_data,savedir+'120hPm25Dataset'+today.strftime('%Y%m%d')+'_t100p100.pkl.gz')
-    np.savetxt(savedir+"120hPm25Dataset"+today.strftime('%Y%m%d')+"_t100p100.txt", obj.input_data, fmt='%.2f')
+    #np.savetxt(savedir+"120hPm25Dataset"+today.strftime('%Y%m%d')+"_t100p100.txt", obj.input_data, fmt='%.2f')
     np.random.shuffle(obj.input_data)
     savefile(obj.input_data,savedir+'120hPm25Dataset'+today.strftime('%Y%m%d')+'_t100p100shuffled.pkl.gz')
